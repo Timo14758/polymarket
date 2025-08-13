@@ -1,0 +1,32 @@
+name: Polymarket Auto Scanner
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"   # elke 4 uur
+  workflow_dispatch: {}
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run scanner
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          THRESHOLD_HIGH: ${{ vars.THRESHOLD_HIGH }}
+          THRESHOLD_LOW: ${{ vars.THRESHOLD_LOW }}
+          MIN_LIQ_USD: ${{ vars.MIN_LIQ_USD }}
+          MIN_VOL_USD: ${{ vars.MIN_VOL_USD }}
+          MAX_ALERTS: ${{ vars.MAX_ALERTS }}
+        run: python scanner.py
