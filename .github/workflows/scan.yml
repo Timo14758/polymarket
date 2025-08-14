@@ -1,33 +1,8 @@
-name: Polymarket Auto Scanner (Daily 12NL + Manual)
-
-on:
-  schedule:
-    # 1× per dag om 10:00 UTC (≈ 12:00 NL in de zomer)
-    - cron: "0 10 * * *"
-  workflow_dispatch: {}   # hiermee kun je hem handmatig starten
-
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install deps
-        run: pip install -r requirements.txt
-
-      - name: Run scanner
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          THRESHOLD_HIGH: "0.85"
-          THRESHOLD_LOW:  "0.15"
-          MIN_LIQ_USD:    "2500"
-          MIN_VOL_USD:    "5000"
-          MAX_ALERTS:     "7"
-        run: python scanner.py
+env:
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  THRESHOLD_HIGH: "0.80"
+  THRESHOLD_LOW:  "0.20"
+  MIN_LIQ_USD:    "1500"
+  MIN_VOL_USD:    "3000"
+  MAX_ALERTS:     "7"
