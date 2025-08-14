@@ -1,10 +1,10 @@
-name: Polymarket Auto Scanner (Daily)
+name: Polymarket Auto Scanner (Daily 12NL)
 
 on:
   schedule:
-    # 1× per dag om 07:00 UTC (≈ 09:00 NL-tijd in de zomer, 08:00 in de winter)
-    - cron: "0 7 * * *"
-  workflow_dispatch: {}   # handmatig starten vanuit Actions blijft mogelijk
+    # 1× per dag om 10:00 UTC (≈ 12:00 NL in de zomer)
+    - cron: "0 10 * * *"
+  workflow_dispatch: {}   # handmatig starten blijft mogelijk
 
 jobs:
   scan:
@@ -23,14 +23,11 @@ jobs:
 
       - name: Run scanner
         env:
-          # 必須 secrets (heb je al aangemaakt)
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-          # Optionele filters — zuinig en niet te ruim, zodat je weinig noise krijgt
-          THRESHOLD_HIGH: "0.85"   # Yes ≥ 85% ⇒ contrarian = No
-          THRESHOLD_LOW:  "0.15"   # Yes ≤ 15% ⇒ contrarian = Yes
-          MIN_LIQ_USD:    "2500"   # filter illiquide markten weg
+          THRESHOLD_HIGH: "0.85"
+          THRESHOLD_LOW:  "0.15"
+          MIN_LIQ_USD:    "2500"
           MIN_VOL_USD:    "5000"
           MAX_ALERTS:     "7"
         run: python scanner.py
