@@ -1,13 +1,18 @@
-name: Polymarket Auto Scanner (Daily 12NL + Manual)
+name: Polymarket Auto Scanner (Every 15 Minutes)
 
 on:
   schedule:
-    - cron: "0 10 * * *"     # ≈ 12:00 NL in de zomer (GitHub gebruikt UTC)
-  workflow_dispatch: {}       # handmatig starten
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: polymarket-scan-15min
+  cancel-in-progress: true
 
 jobs:
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,9 +26,9 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          THRESHOLD_HIGH: "0.85"
-          THRESHOLD_LOW:  "0.15"
-          MIN_LIQ_USD:    "2500"
-          MIN_VOL_USD:    "5000"
-          MAX_ALERTS:     "7"
+          THRESHOLD_HIGH: "0.80"
+          THRESHOLD_LOW:  "0.20"
+          MIN_LIQ_USD:    "1000"
+          MIN_VOL_USD:    "2000"
+          MAX_ALERTS:     "10"
         run: python scanner.py
